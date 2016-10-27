@@ -1,0 +1,15 @@
+#!/bin/bash
+
+################################################
+# db_backup -- creates an archive of all the databases
+################################################
+
+snapdir="/mnt/data/backup/snapshots"
+thedate="$( date +%F_%H-%M-%S )"
+script_name="$( basename $0 )"
+outfile="${snapdir}/db-${thedate}.gz"
+
+mysqldump --single-transaction --flush-logs --master-data=2 --all-databases -u root -p  | gzip > $outfile
+echo 'purge master logs before date_sub(now(), interval 7 day);' | mysql
+
+exit 0

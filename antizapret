@@ -1,0 +1,16 @@
+#!/bin/bash
+
+if [ $# -eq 1 ] ; then
+ url="$1"
+ type="csv"
+elif [ -n "$1" ] && [ -n "$2" ] ; then
+ url="$1"
+ type="$2"
+else
+ echo "Usage $( basename $0) url [type]"
+ exit 1
+fi
+
+curl -s "http://api.antizapret.info/get.php?item=${url}&type=${type}" | sed -s "s/ $//g"
+
+exit 0

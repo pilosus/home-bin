@@ -1,0 +1,18 @@
+#!/bin/bash 
+
+##################################################################
+# genpass -- generates random password
+# usage: genpass [N]
+# where N is password's length 
+# default length is 12 characters
+##################################################################
+
+if [ -z "$1" ] ; then
+ length=12
+else 
+ length="$1"
+fi
+
+tr -dc A-Za-z0-9_ < /dev/urandom | head -c ${length} | xargs
+
+exit 0

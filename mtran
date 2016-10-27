@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+
+######################################################################
+# mtran -- a dictionary. Supports english/french/spanish/german/dutch/
+# latvian/estonian/esperanto into russian and vice versa. 
+#
+# Usage: mtran word [language code]
+# where 
+#   word: a word or a phrase (put quotation marks around!)  
+#   language code: 
+#              fr: french 
+#              de: german
+#              nl: dutch
+#              es: spanish
+#               lt: latvian
+#              ee: estonian
+#              eo: esperanto
+#              en: english
+# If language code is omitted, looks up the english translation.
+#
+# In order to encode non-ASCII chars properly, the program requires perl with
+# URI::Escape module installed. Otherwise use digraphs `oe', `ae', `ue', `ss',
+# `n' instead of `ö', `ä', `ü', `ß', `ñ' respectively, but there's no guarantee
+# that it will work.
+#
+# Examples
+# $: mtran Obst de
+# $: mtran "how are you" en
+######################################################################
+
+case $2 in
+ fr) lang=4;;  # french-russian
+ de) lang=3;;  # german-russian
+ nl) lang=2;;  # dutch-russian 
+ es) lang=5;;  # spanish-russian
+ lt) lang=27;; # latvian-russian
+ eo) lang=34;; # esperanto-russian
+ ee) lang=26;; # estonian-russian
+ *) lang=1;;   # english-russian
+esac
+
+perl_module="$( perldoc -l URI::Escape | grep -E "^No " )"
+
+if [ -z "$perl_module" ] ; then
+    query=$( perl -MURI::Escape -e 'print uri_escape($ARGV[0]);' "$1" )
+else 
+    query="$1"
+fi
+
+elinks -dump -no-numbering -no-references "http://www.multitran.ru/c/m.exe?CL=1&l1=${lang}&s=${query}" | 
+sed -e "1,/.*Поиск.*/ d" -e "/${1}:.*/,$ d" 
+
+exit 0

@@ -1,0 +1,1 @@
+exec import -window root ~/screenshots/$(date +%F_%H-%M-%S).png

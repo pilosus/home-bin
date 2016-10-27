@@ -1,0 +1,88 @@
+#!/usr/bin/env python
+
+### libraries
+import sys
+from html.parser import HTMLParser
+import urllib.request, urllib.error
+import re
+#import argparse
+
+### global variables
+measures = ['Place', 'Altitude', 'Temperature', 'Humidity', 
+            'Wind direction', 'Wind velocity', 'Wind gust', \
+            'Precipitation', 'Sun', 'Pressure', 'Pressure trend']
+
+measure_to_unit = {'Altitude': 'm', 'Temperature': '°', \
+                   'Humidity': '%', 'Wind velocity': 'km/h', \
+                   'Wind gust': 'km/h', 'Precipitation': 'mm', \
+                   'Sun': '%', 'Pressure': 'hPa'}
+
+### helper function
+def get_tidy(s):
+    """Remove unit measurements from a string."""
+    s = re.sub(r'\s*(%|m|mm|km\/h|hPa)+', '', s)
+    s = re.sub(r'\s*$', '', s) # getting rid of whitespaces
+    s = re.sub(r'^\s*', '', s)
+    s = re.sub(r'<[^>]*>', '', s) # getting rid of html tags
+    return s
+
+### class for html.parser
+weather = []
+class MyHTMLParser(HTMLParser):
+    def handle_data(self, data):
+        """Get data from the parsed html code."""
+        data = get_tidy(data)
+        if ', ' in data:
+            for i in data.split(', '):
+                weather.append(i)
+        elif data and data != ' ':
+            weather.append(get_tidy(data))
+    def handle_starttag(self, tag, attrs):
+        """Get pressure data."""
+        if tag == 'img':
+            weather.append(attrs[-1][-1])
+
+### Wien Mariabrunn
+try: 
+    f = urllib.request.urlopen('http://www.zamg.ac.at/cms/de/wetter/wetterwerte-analysen/wien')
+    forecast = f.read().decode('utf-8')
+except urllib.error.URLError as e:
+    sys.exit(e)
+
+mariabrunn = "<tr class=\"dynPageTableLine2\">.*Wien Mariabrunn</a></td>(.*</td>)</tr>"
+wien = re.search(mariabrunn, forecast)
+parser = MyHTMLParser(strict=False)
+parser.feed(wien.group(0))
+
+weather_dict = dict(zip(measures, weather))
+
+### printing functions
+# http://docs.python.org/3/library/string.html#format-specification-mini-language
+
+def nice_print(measures, weather, units):
+    """Print out data collected in a nice way."""
+    for m in measures:
+        if m in units.keys():
+            print("{0:<30} {1} {2}".format(m, weather[m], units[m]))
+        else:
+            print("{0:<30} {1}".format(m, weather[m]))
+
+def log_print(measures, weather):
+    """Print out data collected in a way appropriate for logging."""
+    out = ""
+    for m in measures:
+        out += weather[m] + ';'
+    print(out)
+    
+if __name__ == '__main__':
+    args = sys.argv[1:]
+    if '-l' in args:
+        log_print(measures, weather_dict)
+    else:
+        nice_print(measures, weather_dict, measure_to_unit)
+    
+### russia ###
+#'http://meteoinfo.ru/pogoda/russia/republic-karelia/petrozavodsk'
+#russia = re.findall("<td class=pogodacell>(.*)</td>", forecast)
+#parser = MyHTMLParser(strict=False)
+#parser.feed(russia)

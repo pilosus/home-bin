@@ -1,0 +1,17 @@
+#!/bin/bash
+
+##################################################################
+# dict -- looks up the meaning of a word in The Collaborative International
+# Dictionary of English.
+#
+# Usage: dict word
+# 
+# Examples
+#
+# dict trust
+# dict "ad hoc" 
+##################################################################
+
+curl -s "dict://dict.org/d:${1}"
+
+exit 0

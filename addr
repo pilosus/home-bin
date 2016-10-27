@@ -1,0 +1,24 @@
+#!/bin/bash
+# check current IP-addresses
+# -i	internal IP-address
+# -e	external IP-address
+# when arguments ommited checks out both internal/external IP-addr
+
+function internal_ip 
+{
+    ip addr show | grep "inet 192" | sed -s "s/^ *inet *//"
+}
+
+function external_ip
+{
+    curl -s "ifconfig.me/all" | grep "ip_addr" | sed -s "s/ip_addr: *//"
+}
+
+case $1 in
+-i) internal_ip;;
+-e) external_ip;;
+*) internal_ip;external_ip;;
+esac
+			
+exit 0
+
