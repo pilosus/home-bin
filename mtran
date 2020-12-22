@@ -2,13 +2,13 @@
 
 ######################################################################
 # mtran -- a dictionary. Supports english/french/spanish/german/dutch/
-# latvian/estonian/esperanto into russian and vice versa. 
+# latvian/estonian/esperanto into russian and vice versa.
 #
-# Usage: mtran word [language code]
-# where 
-#   word: a word or a phrase (put quotation marks around!)  
-#   language code: 
-#              fr: french 
+# Usage: mtran word [from language code] [to language code]
+# where
+#   word: a word or a phrase (put quotation marks around!)
+#   language code:
+#              fr: french
 #              de: german
 #              nl: dutch
 #              es: spanish
@@ -16,6 +16,7 @@
 #              ee: estonian
 #              eo: esperanto
 #              en: english
+#              ru: russian
 # If language code is omitted, looks up the english translation.
 #
 # In order to encode non-ASCII chars properly, the program requires perl with
@@ -25,29 +26,42 @@
 #
 # Examples
 # $: mtran Obst de
-# $: mtran "how are you" en
+# $: mtran "how are you" en de
 ######################################################################
 
 case $2 in
- fr) lang=4;;  # french-russian
- de) lang=3;;  # german-russian
- nl) lang=2;;  # dutch-russian 
- es) lang=5;;  # spanish-russian
- lt) lang=27;; # latvian-russian
- eo) lang=34;; # esperanto-russian
- ee) lang=26;; # estonian-russian
- *) lang=1;;   # english-russian
+ ru) from=2;;  # russian
+ fr) from=4;;  # french
+ de) from=3;;  # german
+ nl) from=2;;  # dutch
+ es) from=5;;  # spanish
+ lt) from=27;; # latvian
+ eo) from=34;; # esperanto
+ ee) from=26;; # estonian
+ *) from=1;;   # english
+esac
+
+case $3 in
+ en) to=1;;  # english
+ fr) to=4;;  # french
+ de) to=3;;  # german
+ nl) to=2;;  # dutch
+ es) to=5;;  # spanish
+ lt) to=27;; # latvian
+ eo) to=34;; # esperanto
+ ee) to=26;; # estonian
+ *) to=2;;   # russian
 esac
 
 perl_module="$( perldoc -l URI::Escape | grep -E "^No " )"
 
 if [ -z "$perl_module" ] ; then
     query=$( perl -MURI::Escape -e 'print uri_escape($ARGV[0]);' "$1" )
-else 
+else
     query="$1"
 fi
 
-elinks -dump -no-numbering -no-references "http://www.multitran.ru/c/m.exe?CL=1&l1=${lang}&s=${query}" | 
-sed -e "1,/.*Поиск.*/ d" -e "/${1}:.*/,$ d" 
+elinks -dump -no-numbering -no-references "http://www.multitran.ru/c/m.exe?CL=1&l1=${from}&l2=${to}&s=${query}" \
+  | sed -e "1,/.*к фразам.*/ d" -e "/${1}:.*/,$ d"
 
 exit 0
