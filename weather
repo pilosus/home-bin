@@ -5,7 +5,7 @@ thedate=$( date -u +%d-%m-%Y )
 thetime=$( date -u +%H:%M:%S )
 
 # weather
-dump=$( curl -s "http://www.zamg.ac.at/cms/de/wetter/wetterwerte-analysen/wien" | grep "Wien Mariabrunn</a>" )
+dump=$( curl -SsL "https://www.zamg.ac.at/cms/de/wetter/wetterwerte-analysen/wien" | grep "Wien Mariabrunn</a>" )
 chomp_dump=$( echo $dump | sed "s/<[^>]*>//g ; s/[[:alpha:]&;,\/ %]/_/g; s/_\{1,\}/_/g")
 
 temp=$( echo $chomp_dump | cut -d "_" -f3 )
@@ -19,10 +19,10 @@ wind_direction=$( echo $dump | sed "s/<[^>]*>/_/g ; s/[ ;&]//g; s/_\{1,\}/_/g" |
 pressure_trend=$( echo $dump | sed "s/\(.*\)title=\"\(.*\)\(\".*\)/\2/g" )
 
 # moon phase
-moon=$( curl -s "http://www.die.net/moon/" | grep "lit:" | sed "s/\(.*, \)\(.*\)%.*/\2/g" )
+moon=$( curl -SsL "https://www.die.net/moon/" | grep "lit:" | sed "s/\(.*, \)\(.*\)%.*/\2/g" )
 
 if [ "$1" == "-v" ] ; then
- printf "%-25s %s\n" "Date:" ${thedate} "Time, UTC:" ${thetime} "Temperature:" ${temp} "Humidity, %:" ${humidity} "Wind direction:" ${wind_direction} "Wind velocity, km/h:" ${wind_velocity} "Gust velocity, km/h:"  ${gust_velocity} "Precipitation, mm:" ${precipitation} "Sunshine, %:" ${sun} "Pressure, hPa:" ${pressure} "Pressure, trend:" "${pressure_trend}" "Moon phase:" ${moon} 
+ printf "%-25s %s\n" "Date:" ${thedate} "Time, UTC:" ${thetime} "Temperature:" ${temp} "Humidity, %:" ${humidity} "Wind direction:" ${wind_direction} "Wind velocity, km/h:" ${wind_velocity} "Gust velocity, km/h:"  ${gust_velocity} "Precipitation, mm:" ${precipitation} "Sunshine, %:" ${sun} "Pressure, hPa:" ${pressure} "Pressure, trend:" "${pressure_trend}" "Moon phase:" ${moon}
 
 else
  echo "${thedate};${thetime};${temp};${humidity};${wind_direction};${wind_velocity};${gust_velocity};${precipitation};${sun};${pressure};${pressure_trend};${moon}"
