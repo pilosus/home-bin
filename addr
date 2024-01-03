@@ -6,7 +6,7 @@
 
 function internal_ip 
 {
-    ip addr show | grep "inet 192" | sed -s "s/^ *inet *//"
+    ip addr show | grep "inet 192" | sed -E "s/.*inet (.*)\/.*/\1/"
 }
 
 function external_ip
