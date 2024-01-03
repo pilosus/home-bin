@@ -61,7 +61,7 @@ else
     query="$1"
 fi
 
-elinks -dump -no-numbering -no-references "http://www.multitran.ru/c/m.exe?CL=1&l1=${from}&l2=${to}&s=${query}" \
-  | sed -e "1,/.*к фразам.*/ d" -e "/${1}:.*/,$ d"
+elinks -dump -no-numbering -no-references "https://www.multitran.ru/c/m.exe?CL=1&l1=${from}&l2=${to}&s=${query}" \
+  | sed -e "1,/.*to phrases.*/ d" -e "/${1}:.*/,$ d"
 
 exit 0
