@@ -19,7 +19,7 @@ wind_direction=$( echo $dump | sed "s/<[^>]*>/_/g ; s/[ ;&]//g; s/_\{1,\}/_/g" |
 pressure_trend=$( echo $dump | sed "s/\(.*\)title=\"\(.*\)\(\".*\)/\2/g" )
 
 # moon phase
-moon=$( curl -SsL "https://www.die.net/moon/" | grep "lit:" | sed "s/\(.*, \)\(.*\)%.*/\2/g" )
+moon=$( curl -SsL -A "Mozilla/5.0 (compatible;  MSIE 7.01; Windows NT 5.0)" --url "https://www.die.net/moon/" | grep "lit:" | sed "s/\(.*, \)\(.*\)%.*/\2/g" )
 
 if [ "$1" == "-v" ] ; then
  printf "%-25s %s\n" "Date:" ${thedate} "Time, UTC:" ${thetime} "Temperature:" ${temp} "Humidity, %:" ${humidity} "Wind direction:" ${wind_direction} "Wind velocity, km/h:" ${wind_velocity} "Gust velocity, km/h:"  ${gust_velocity} "Precipitation, mm:" ${precipitation} "Sunshine, %:" ${sun} "Pressure, hPa:" ${pressure} "Pressure, trend:" "${pressure_trend}" "Moon phase:" ${moon}
