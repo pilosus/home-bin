@@ -1,8 +1,0 @@
-#!/usr/bin/bash
-
-############################################################
-# Wrapper for running programs from command line.
-# Put program in bg and redirect error messages to null
-############################################################
-
-$@ &> /dev/null &

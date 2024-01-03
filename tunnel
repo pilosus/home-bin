@@ -1,5 +1,0 @@
-#!/bin/bash
-
-echo 'Establishing dynamic port tunneling over SSL...'
-echo 'Use port NNNN'
-ssh -D NNNN you@server -N

@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-w3m -dump "http://oald8.oxfordlearnersdictionaries.com/dictionary/${1}" | 
-sed -e "1, /^${1}/ d" -e '/^$/ d' -e '/Oxford University Press/, $ d'
-exit 0

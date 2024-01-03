@@ -1,9 +1,0 @@
-#!/bin/bash
-
-if [ "$1" == "-R" ] ; then
-    $( find . -type f -name "*~" -exec rm {} +)
-else
-    $( rm *~ )
-fi
-
-exit 0
